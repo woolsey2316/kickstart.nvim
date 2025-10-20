@@ -4,6 +4,26 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    'mfussenegger/nvim-lint',
+    event = 'BufWritePost', -- or other appropriate event
+    config = function()
+      require('lint').setup {
+        -- Global configuration for linters
+        linters_by_ft = {
+          markdown = { 'markdownlint' }, -- Link the 'markdown' filetype to the 'markdownlint' linter
+        },
+        -- You can also define custom linters if needed
+        linters = {
+          markdownlint = {
+            cmd = 'markdownlint-cli2',
+            args = { '--config', '~/.config/markdownlint.yaml', '$FILE' },
+            parser = require('lint.parser').from_json,
+          },
+        },
+      }
+    end,
+  },
+  {
     'kdheepak/lazygit.nvim',
     lazy = true,
     cmd = {
