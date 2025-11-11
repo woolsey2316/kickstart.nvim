@@ -4,22 +4,35 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    'williamboman/mason.nvim',
+    config = function()
+      require('mason').setup()
+    end,
+  },
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      'williamboman/mason-lspconfig.nvim',
+    },
+    config = function()
+      require('mason-lspconfig').setup {
+        ensure_installed = { 'jsonls' }, -- Ensure jsonls is installed
+      }
+    end,
+  },
+  {
     'mfussenegger/nvim-lint',
     event = 'BufWritePost', -- or other appropriate event
     config = function()
-      require('lint').setup {
-        -- Global configuration for linters
-        linters_by_ft = {
-          markdown = { 'markdownlint' }, -- Link the 'markdown' filetype to the 'markdownlint' linter
-        },
-        -- You can also define custom linters if needed
-        linters = {
-          markdownlint = {
-            cmd = 'markdownlint-cli2',
-            args = { '--config', '~/.config/markdownlint.yaml', '$FILE' },
-            parser = require('lint.parser').from_json,
-          },
-        },
+      local lint = require 'lint'
+      lint.linters_by_ft = {
+        markdown = { 'markdownlint' },
+      }
+      lint.linters.markdownlint = {
+        name = 'markdownlint',
+        cmd = 'markdownlint-cli2',
+        args = { '--config', vim.fn.expand '~/.config/markdownlint.yaml', '$FILE' },
+        parser = require('lint.parser').from_json,
       }
     end,
   },
